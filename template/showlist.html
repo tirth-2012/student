@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block body %}
+
+    <style>
+        .table th,thead{
+            background-color: #41b6e0;
+        }
+        body{
+            background-image: url(/static/list.avif);
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            backdrop-filter: blur(4px);
+        }
+    </style>
+
+    <!-- Search Bar -->
+    <div class="container mt-4">
+        <form method="get" action="{% url 'searchlist' %}" class="input-group mb-3">
+            <input type="text" name="search" class="form-control" placeholder="Search by Name" value="{{ query }}">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+    </div>
+
+    <!-- Student Details Table -->
+    <div class="container mt-3">
+        <h2 class="text-center mb-4">Student Details</h2>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Image</th>
+                        <th>Gender</th>
+                        <th>Phone</th>
+                        <th>City</th>
+                        <th>Courses</th>
+                        <th>Fees</th>
+                        <th>Paid Fees</th>
+                        <th>Remainimg Fees</th>
+                        <th>Date of Admission</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sa in s %}
+                    <tr class="
+                    {% if sa.remaining_fees == 0 %}
+                        table-success
+                    {% endif %}">
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ sa.fname }}</td>
+                        <td>{{ sa.lname }}</td>
+                        <td>
+                            <img src="{{ sa.image }}" alt="Image" class="img-thumbnail" style="height: 80px; width: 50px;">
+                        </td>
+                        <td>{{ sa.gender }}</td>
+                        <td>{{ sa.phone }}</td>
+                        <td>{{ sa.city }}</td>
+                        <td>{{ sa.coures }}</td>
+                        <td>{{ sa.amount }}
+                        <td>{{ sa.total_fees_paid }}</td>
+                        <td>
+                            {% if sa.remaining_fees > 0 %}
+                            <span class="text-danger">₹{{ sa.remaining_fees }}</span>
+                            {% elif sa.total_fees_paid == sa.amount %}
+                            <span class="text-success">Fully Paid</span>
+                            {% else %}
+                            <span class="text-danger">Paiding</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ sa.admission_date }}</td>
+                        <td>
+                            <a href="{% url 'editstudent' sa.id %}" class="btn btn-warning btn-sm"><i class="fa fa-pencil"></i></a>
+                            <form action="{% url 'deletestudent' sa.id %}" method="post" class="d-inline" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this student?');"><i class="fa fa-times"></i></button>
+                            </form>
+                            <a href="{% url 'show' sa.id %}" class="btn btn-primary btn-sm"><i class="fa fa-search"></i></a>
+                           
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="11" class="text-center">No students found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            let filter = this.value.toLowerCase();
+            let students = document.querySelectorAll('#studentList li');
+
+            students.forEach(function(student) {
+                let text = student.textContent.toLowerCase();
+                student.style.display = text.includes(filter) ? '' : 'none';
+            });
+        });
+    </script>
+{% endblock body %}

@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class="container mt-4">
+    <h2>📝 Notes</h2>
+
+    <!-- Text area for writing notes -->
+    <textarea id="note-content" class="form-control" placeholder="Write your note here..."></textarea>
+    <button id="save-note-btn" class="btn btn-primary mt-3">Save Note</button>
+
+    <h3 class="mt-4">Saved Notes</h3>
+    <ul id="notes-list" class="list-group">
+        {% for note in notes %}
+        <li class="list-group-item" id="note-{{ note.id }}">
+            <p>{{ note.content }}</p>
+            <button class="btn btn-danger btn-sm delete-btn" data-id="{{ note.id }}">Delete</button>
+        </li>
+        {% empty %}
+        <li class="list-group-item">No notes found.</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<script>
+// Function to save note directly to the database
+document.getElementById("save-note-btn").addEventListener("click", function () {
+    const content = document.getElementById("note-content").value;
+    
+    if (!content.trim()) {
+        return alert("Note content cannot be empty.");
+    }
+
+    // Send note to Django backend using fetch (AJAX)
+    fetch("/notes/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: `content=${encodeURIComponent(content)}`
+    })
+    .then(response => {
+        if (response.ok) {
+            alert("Note saved successfully.");
+            window.location.reload();  // Reload the page to show the new note
+        } else {
+            alert("Failed to save the note.");
+        }
+    })
+    .catch(error => console.error("Error saving note:", error));
+});
+
+// Delete note functionality
+document.querySelectorAll('.delete-btn').forEach(button => {
+    button.addEventListener('click', function() {
+        const noteId = button.getAttribute('data-id');
+        
+        fetch("/notes/", {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: `note_id=${noteId}`
+        })
+        .then(response => {
+            if (response.ok) {
+                document.getElementById(`note-${noteId}`).remove();  // Remove the note from the list
+            } else {
+                alert("Failed to delete the note.");
+            }
+        })
+        .catch(error => console.error("Error deleting note:", error));
+    });
+});
+</script>
+{% endblock body %}

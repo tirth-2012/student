@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block body %}
+
+    <style>
+        body{
+            background-image: url(/static/fees.jpeg);
+            background-repeat: no-repeat;
+            background-size: 100% 90%;
+            backdrop-filter: blur(4px);
+        }
+        
+    </style>
+
+    <!-- Payment Table -->
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Payment Details</h2>
+
+        <form method="GET" class="row g-3 mb-4">
+            <div class="col-md-4">
+                <label for="from_date" class="form-label">From Date</label>
+                <input type="date" name="from_date" id="from_date" class="form-control" value="{{ from_date }}">
+            </div>
+            <div class="col-md-4">
+                <label for="to_date" class="form-label">To Date</label>
+                <input type="date" name="to_date" id="to_date" class="form-control" value="{{ to_date }}">
+            </div>
+            <div class="col-md-4 align-self-end">
+                <button type="submit" class="btn btn-primary w-100">Search</button>
+            </div>
+        </form>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Student Name</th>
+                        <th>Payment Amount</th>
+                        <th>Date Paid</th>
+                        <th>Take By Amount</th>
+                        <th>Payment Method</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for post in posts %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ post.student.fname }} {{ post.student.lname }}</td>
+                        <td>₹{{ post.payment }}</td>
+                        <td>{{ post.date_paid }}</td>
+                        <td>{{ post.take }}</td>
+                        <td>{{ post.pay_method }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">No payments found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let dateInput = document.getElementById("date");
+            let today = new Date().toISOString().split("T")[0]; 
+            dateInput.setAttribute("max", today); 
+        });
+    </script>
+{% endblock body %}

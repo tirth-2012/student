@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block body %}
+    <style>
+        .div{
+            width: 600px;
+        }
+        body{
+            background-image: url(/static/fees.webp);
+            background-repeat: no-repeat;
+            background-size: 100% 90%;
+            backdrop-filter: blur(2px);
+        }
+    </style>
+
+    <!-- Payment Form -->
+    <div class="container mt-3 div">
+        <h2 class="text-center mb-4">Take Payment</h2>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form method="post" action="{% url 'addpayment' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="student" class="form-label">Student</label>
+                        <select name="student" id="student" class="form-select" required>
+                            <option value="">Select a Student</option>
+                            {% for sa in s %}
+                                <option value="{{ sa.id }}">{{ sa.fname }} {{ sa.lname }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Payment Amount</label>
+                        <input type="number" name="payment" id="payment" class="form-control" step="0.01" placeholder="Enter payment amount" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="date_paid" class="form-label">Payment Date</label>
+                        <input type="date" name="date_paid" id="date_paid" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="remarks" class="form-label">Take By Amount</label>
+                        <!-- <textarea name="remarks" id="remarks" class="form-control" placeholder="Enter remarks (optional)"></textarea> -->
+                        <input type="text" name="take" id="" class="form-control" placeholder="Enter Take payment Name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="payment_method" class="form-label">Payment Method</label>
+                        <select name="pay_method" id="payment_method" class="form-select" required>
+                            <option value="Cash">Cash</option>
+                            <option value="Card">Card</option>
+                            <option value="Online">Online</option>
+                        </select>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Submit Payment</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let dateInput = document.getElementById("date");
+            let today = new Date().toISOString().split("T")[0]; 
+            dateInput.setAttribute("max", today); 
+        });
+    </script>
+{% endblock body %}

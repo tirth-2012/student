@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block body %}
+    <style>
+        body{
+            background-image: url(/static/addstudent.avif);
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            backdrop-filter: blur(4px);
+        }
+    </style>
+
+    <!-- Form Section -->
+    <div class="container">
+        <h2 class="text-center mb-4 mt-5">Add Student Details</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row">
+                <!-- First Name -->
+                <div class="col-md-4 mb-3">
+                    <label  class="form-label">First Name</label>
+                    <input type="text" name="fname" class="form-control" placeholder="Enter first name" required>
+                </div>
+
+                <!-- Middle Name -->
+                <div class="col-md-4 mb-3">
+                    <label for="middleName" class="form-label">Middle Name</label>
+                    <input type="text" name="mname" class="form-control" id="middleName" placeholder="Enter middle name">
+                </div>
+
+                <!-- Last Name -->
+                <div class="col-md-4 mb-3">
+                    <label for="lastName" class="form-label">Last Name</label>
+                    <input type="text" name="lname" class="form-control" id="lastName" placeholder="Enter last name" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Gender -->
+                <div class="col-md-4 mb-3">
+                    <label for="gender" class="form-label">Gender</label>
+                    <select class="form-select" name="gender" id="gender" required>
+                        <option value="">Choose...</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+
+                <!-- Email -->
+                <div class="col-md-4 mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control" id="email" placeholder="Enter email" required>
+                </div>
+
+                <!-- Phone -->
+                <div class="col-md-4 mb-3">
+                    <label for="phone" class="form-label">Phone</label>
+                    <input type="text" id="phone" name="phone" class="form-control" placeholder="Enter phone number" required>
+                </div>
+            </div>
+
+            <!-- Address -->
+            <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="address" class="form-label">Address</label>
+                <textarea class="form-control" name="address" id="address" rows="3" placeholder="Enter address" required></textarea>
+            </div>
+
+                <!-- City -->
+                <div class="col-md-6 mb-3">
+                    <label for="city" class="form-label">City</label>
+                    <select class="form-select" name="city" id="city">
+                        <option value="Ahemadabad">Ahemadabad</option>
+                        <option value="Surendarnagar">Surendarnagar</option>
+                        <option value="Bhavanagar">Bhavanagar</option>
+                        <option value="Surat">Surat</option>
+                        <option value="Gandhinagar">Gandhinagar</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label  class="form-label">Courses</label>
+                    <input type="text" name="coures" class="form-control" placeholder="Enter course" required>
+                </div>
+
+                <!-- Middle Name -->
+                <div class="col-md-4 mb-3">
+                    <label for="middleName" class="form-label">Fees</label>
+                    <input type="number" name="amount" class="form-control" id="middleName" placeholder="Enter fees">
+                </div>
+
+                <!-- Last Name -->
+                <div class="col-md-4 mb-3">
+                    <label for="lastName" class="form-label">Date of Admission</label>
+                    <input type="date" name="admission_date" class="form-control" id="admission_date" placeholder="Enter last name" required>
+                </div>
+            </div>
+
+                <div class="mb-3">
+                    <label for="image" class="form-label">Profile Image</label>
+                    <input type="file" name="image" id="image" class="form-control">
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-center">
+                <button type="submit" value="Submit" class="btn btn-primary">Submit</button>
+                <button type="reset" value="Reset" class="btn btn-secondary">Reset</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("phone").addEventListener("input", function (e) {
+            this.value = this.value.replace(/\D/g, "").slice(0, 10); // Removes non-numeric characters and limits to 10 digits
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+            let dateInput = document.getElementById("date");
+            let today = new Date().toISOString().split("T")[0]; 
+            dateInput.setAttribute("max", today); 
+        });
+    </script>
+{% endblock body %}

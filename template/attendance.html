@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block body %}
+
+    <div class="container mt-2">
+        <h1 class="text-center">Student Attendance</h1>
+
+        <!-- Attendance Form -->
+        <form method="POST" class="row g-3 mb-4 mt-3">
+            {% csrf_token %}
+            <div class="col-md-4">
+                <label for="date" class="form-label">Date</label>
+                <input type="date" name="date" id="date" class="form-control" required>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Select Students:</label>
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" style="width: 100%;" type="button" data-bs-toggle="dropdown">
+                        Choose Students
+                    </button>
+                    <ul class="dropdown-checkbox dropdown-menu">
+                        {% for sa in student %}
+                        <li>
+                            <label class="dropdown-item">
+                                <input type="checkbox" name="students" value="{{ sa.id }}" onchange="updateSelected()">
+                                {{ sa.fname }} {{ sa.lname }}
+                            </label>
+                        </li>
+                        {% empty %}
+                        <li class="text-center">No students available</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <label for="status" class="form-label">Status</label>
+                <select name="status" id="status" class="form-select" required>
+                    <option value="Present">Present</option>
+                    <option value="Absent">Absent</option>
+                </select>
+            </div>
+            <div class="col-md-12">
+                <p><strong>Selected Students:</strong> <span id="selected-students" class="text-primary"></span></p>
+            </div>
+            <div class="col-md-12 text-center">
+                <button type="submit" class="btn btn-primary">Mark Attendance</button>
+            </div>
+        </form>
+
+        <!-- Attendance Records Table -->
+        <h2 class="text-center">Attendance Records</h2>
+        <form method="GET" class="row g-3 mb-4">
+            <div class="col-md-6">
+                <label for="filter_date" class="form-label">Filter by Date</label>
+                <input type="date" name="filter_date" id="filter_date" class="form-control" value="{{ filter_date }}">
+            </div>
+            <div class="col-md-6 align-self-end">
+                <button type="submit" class="btn btn-secondary w-100">Filter</button>
+            </div>
+        </form>
+
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr class="table-dark">
+                    <th>#</th>
+                    <th>Student Name</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in att %}
+                <tr class="{% if record.status == 'Present' %}table-success{% elif record.status == 'Absent' %}table-danger{% endif %}">
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ record.student.fname }} {{ record.student.lname }}</td>
+                    <td>{{ record.date }}</td>
+                    <td>{{ record.status }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">No attendance records found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="/" class="btn btn-secondary mt-3">Back to Home</a>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let dateInput = document.getElementById("date");
+            let today = new Date().toISOString().split("T")[0]; 
+            dateInput.setAttribute("max", today); 
+        });
+        function updateSelected() {
+            let selectedNames = [];
+            document.querySelectorAll('input[name="students"]:checked').forEach((checkbox) => {
+                selectedNames.push(checkbox.parentElement.textContent.trim());
+            });
+            document.getElementById("selected-students").innerText = selectedNames.join(", ");
+        }
+    </script>
+
+{% endblock body %}

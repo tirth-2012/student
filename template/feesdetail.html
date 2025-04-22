@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block body %}
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .table thead th {
+            text-align: center;
+        }
+        .table tbody td {
+            vertical-align: middle;
+            text-align: center;
+        }
+        h1 {
+            color: #0d6efd;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .btn-primary {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+        .btn-primary:hover {
+            background-color: #084298;
+            border-color: #084298;
+        }
+        
+    </style>
+
+    <!-- Fees Summary Container -->
+    <div class="container mt-5">
+        <h1 class="text-center">Student Fees Summary</h1>
+
+        <div class="table-responsive mt-4">
+            <table class="table table-bordered table-hover table-striped align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Total Fees</th>
+                        <th>Total Paid</th>
+                        <th>Remaining Fees</th>
+                        <th>Add Payment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td><strong>{{ student.fname }} {{ student.lname }}</strong></td>
+                        <td>₹{{ student.amount }}</td>
+                        <td>₹{{ student.total_fees_paid|default:"0.00" }}</td>
+                        <td>
+                            {% if student.remaining_fees > 0 %}
+                            <span class="text-danger">₹{{ student.remaining_fees }}</span>
+                            {% elif student.total_fees_paid == student.amount %}
+                            <span class="text-success">Fully Paid</span>
+                            {% else %}
+                            <span class="text-danger">Paiding</span>
+                            {% endif %}
+                        </td>
+                        <td>{% if student.remaining_fees > 0 %}
+                            <span class="text-danger"><a href="/addpayment" class="btn btn-primary">Add Payment</a></span>
+                            {% elif student.total_fees_paid == student.amount %}
+                            <span class="text-success">Fully Paid</span>
+                            {% else %}
+                            <span class="text-danger"><a href="/addpayment" class="btn btn-primary">Add Payment</a></span>
+                            {% endif %}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">No students found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="text-center">
+            <a href="/" class="btn btn-primary mt-3">Back to Home</a>
+        </div>
+    </div>
+{% endblock body %}

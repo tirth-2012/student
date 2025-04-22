@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block body %}
+    <div class="container mt-2">
+        
+        <h2 class="text-center">Attendance Records</h2>
+        <div class="container mt-4 p-0">
+            <form method="get" action="{% url 'attendancelist' %}" class="input-group mb-3">
+                <input type="text" name="search" class="form-control" placeholder="Search by Name" value="{{ query }}">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+        
+        <form method="GET" class="row g-3 mb-4">
+            <div class="col-md-6">
+                <label for="filter_date" class="form-label">Filter by Date</label>
+                <input type="date" name="filter_date" id="filter_date" class="form-control" value="{{ filter_date }}">
+            </div>
+            <div class="col-md-6 align-self-end">
+                <button type="submit" class="btn btn-secondary w-100">Filter</button>
+            </div>
+        </form>
+
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr class="table-dark">
+                    <th>#</th>
+                    <th>Student Name</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in att %}
+                <tr
+                    class="{% if record.status == 'Present' %}table-success{% elif record.status == 'Absent' %}table-danger{% endif %}">
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ record.student.fname }} {{ record.student.lname }}</td>
+                    <td>{{ record.date }}</td>
+                    <td>{{ record.status }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">No attendance records found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let dateInput = document.getElementById("date");
+            let today = new Date().toISOString().split("T")[0]; 
+            dateInput.setAttribute("max", today); 
+        });
+    </script>
+{% endblock body %}

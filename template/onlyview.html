@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+{% block body %}
+
+<style>
+    body {
+        background-image: url(/static/list1.jpeg);
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        backdrop-filter: blur(4px);
+    }
+</style>
+
+<!-- Form Section -->
+<div class="container">
+    <h2 class="text-center mb-4 mt-3">Only View</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row">
+            <!-- First Name -->
+            <div class="mb-3 d-flex justify-content-end">
+                {% if s.image %}
+                <img src="{{ s.image.url }}" alt="Profile Image" class="img-thumbnail"
+                    style="max-height: 200px; max-width: 150px;">
+                {% else %}
+                <p class="text-muted">No image uploaded</p>
+                {% endif %}
+            </div>
+            <div class="col-md-4 mb-3">
+                <label class="form-label">First Name</label>
+                <input type="text" name="fname" class="form-control" value="{{ s.fname }}"
+                    placeholder="Enter first name" disabled>
+            </div>
+
+            <!-- Middle Name -->
+            <div class="col-md-4 mb-3">
+                <label for="middleName" class="form-label">Middle Name</label>
+                <input type="text" name="mname" class="form-control" value="{{ s.mname }}"
+                    placeholder="Enter middle name" disabled>
+            </div>
+
+            <!-- Last Name -->
+            <div class="col-md-4 mb-3">
+                <label for="lastName" class="form-label">Last Name</label>
+                <input type="text" name="lname" class="form-control" value="{{ s.lname }}" placeholder="Enter last name"
+                    disabled>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Gender -->
+            <div class="mb-3 col-md-4">
+                <label for="gender" class="form-label">Gender</label>
+                <select name="gender" id="gender" class="form-select" disabled>
+                    <option value="Female" {% if s.gender == 'Male' %}selected{% endif %}>Male</option>
+                    <option value="Female" {% if s.gender == 'Female' %}selected{% endif %}>Female</option>
+                </select>
+            </div>
+
+            <!-- Email -->
+            <div class="col-md-4 mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" name="email" class="form-control" value="{{ s.email }}" placeholder="Enter email"
+                    disabled>
+            </div>
+
+            <!-- Phone -->
+            <div class="col-md-4 mb-3">
+                <label for="phone" class="form-label">Phone</label>
+                <input type="tel" name="phone" class="form-control" value="{{ s.phone }}"
+                    placeholder="Enter phone number" disabled>
+            </div>
+        </div>
+
+        <!-- Address -->
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="address" class="form-label">Address</label>
+                <textarea class="form-control" name="address" rows="3" placeholder="Enter address"
+                    disabled>{{s.address}}</textarea>
+            </div>
+
+            <!-- City -->
+            <div class="col-md-6 mb-3">
+                <label for="city" class="form-label">City</label>
+                <select class="form-select" value="{{s.city}}" name="city" id="city" disabled>
+                    <option value="Ahemadabad" {% if s.city == 'Ahemadabad' %}selected{% endif %}>Ahemadabad</option>
+                    <option value="Surendarnagar" {% if s.city == 'Surendarnagar' %}selected{% endif %}>Surendarnagar
+                    </option>
+                    <option value="Bhavanagar" {% if s.city == 'Bhavanagar' %}selected{% endif %}>Bhavanagar</option>
+                    <option value="Surat" {% if s.city == 'Surat' %}selected{% endif %}>Surat</option>
+                    <option value="Gandhinagar" {% if s.city == 'Gandhinagar' %}selected{% endif %}>Gandhinagar</option>
+                </select>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label class="form-label">Courses</label>
+                <input type="text" name="coures" class="form-control" value="{{ s.coures }}" placeholder="Enter course"
+                    disabled>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label for="middleName" class="form-label">Fees</label>
+                <input type="number" name="amount" class="form-control" value="{{ s.amount }}" placeholder="Enter fees"
+                    disabled>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label for="lastName" class="form-label">Date of Admission</label>
+                <input type="text" name="admission_date" class="form-control" value="{{ s.admission_date }}"
+                    placeholder="Enter last name" disabled>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<div class="container accordion mt-5" id="accordionExample">
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingOne">
+            <button class="accordion-button fs-4" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                aria-expanded="true" aria-controls="collapseOne">
+                Payment Details
+            </button>
+        </h2>
+        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+            data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                <div class="container mt-5">
+                    <h2 class="text-center mb-4 mt-3">Payment Details</h2>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Date Paid</th>
+                                    <th>Take By Amount</th>
+                                    <th>Payment Amount</th>
+                                    <th>Payment Method</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for post in payment %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ post.date_paid }}</td>
+                                    <td>{{ post.take }}</td>
+                                    <td>₹{{ post.payment }}</td>
+                                    <td>{{ post.pay_method }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center">No payments found</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item mt-5">
+        <h2 class="accordion-header" id="headingTwo">
+            <button class="accordion-button collapsed fs-4" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                Attendance Details
+            </button>
+        </h2>
+        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+            data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                <div class="container mt-2">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr class="table-dark">
+                                <th>#</th>
+                                <th>Student Name</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for record in att %}
+                            <tr
+                                class="{% if record.status == 'Present' %}table-success{% elif record.status == 'Absent' %}table-danger{% endif %}">
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ record.student.fname }} {{ record.student.lname }}</td>
+                                <td>{{ record.date }}</td>
+                                <td>{{ record.status }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center">No attendance records found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock body %}
